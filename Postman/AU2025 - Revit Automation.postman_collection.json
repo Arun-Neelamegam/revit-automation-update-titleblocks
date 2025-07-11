@@ -632,7 +632,7 @@
 			"response": []
 		},
 		{
-			"name": "07.1-Generate csvFile Signed Download URL Copy",
+			"name": "07.1-Generate csvFile Signed Download URL",
 			"event": [
 				{
 					"listen": "test",
@@ -970,7 +970,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"jsonapi\": {\r\n        \"version\": \"1.0\"\r\n    },\r\n    \"data\": {\r\n        \"type\": \"items\",\r\n        \"attributes\": {\r\n            \"displayName\": \"result.rvt\",\r\n            \"extension\": {\r\n                \"type\": \"items:autodesk.bim360:File\",\r\n                \"version\": \"1.0\"\r\n            }\r\n        },\r\n        \"relationships\": {\r\n            \"tip\": {\r\n                \"data\": {\r\n                    \"type\": \"versions\",\r\n                    \"id\": \"1\"\r\n                }\r\n            },\r\n            \"parent\": {\r\n                \"data\": {\r\n                    \"type\": \"folders\",\r\n                    \"id\": \"{{aps_folderUrn}}\"\r\n                }\r\n            }\r\n        }\r\n    },\r\n    \"included\": [\r\n        {\r\n            \"type\": \"versions\",\r\n            \"id\": \"1\",\r\n            \"attributes\": {\r\n                \"name\": \"result.rvt\",\r\n                \"extension\": {\r\n                    \"type\": \"versions:autodesk.bim360:File\",\r\n                    \"version\": \"1.0\"\r\n                }\r\n            },\r\n            \"relationships\": {\r\n                \"storage\": {\r\n                    \"data\": {\r\n                        \"type\": \"objects\",\r\n                        \"id\": \"urn:adsk.objects:os.object:wip.dm.prod/{{resultFileObjectId}}\"\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"jsonapi\": {\r\n        \"version\": \"1.0\"\r\n    },\r\n    \"data\": {\r\n        \"type\": \"items\",\r\n        \"attributes\": {\r\n            \"displayName\": \"result.rvt\",\r\n            \"extension\": {\r\n                \"type\": \"items:autodesk.bim360:File\",\r\n                \"version\": \"1.0\"\r\n            }\r\n        },\r\n        \"relationships\": {\r\n            \"tip\": {\r\n                \"data\": {\r\n                    \"type\": \"versions\",\r\n                    \"id\": \"1\"\r\n                }\r\n            },\r\n            \"parent\": {\r\n                \"data\": {\r\n                    \"type\": \"folders\",\r\n                    \"id\": \"{{folderUrn}}\"\r\n                }\r\n            }\r\n        }\r\n    },\r\n    \"included\": [\r\n        {\r\n            \"type\": \"versions\",\r\n            \"id\": \"1\",\r\n            \"attributes\": {\r\n                \"name\": \"result.rvt\",\r\n                \"extension\": {\r\n                    \"type\": \"versions:autodesk.bim360:File\",\r\n                    \"version\": \"1.0\"\r\n                }\r\n            },\r\n            \"relationships\": {\r\n                \"storage\": {\r\n                    \"data\": {\r\n                        \"type\": \"objects\",\r\n                        \"id\": \"urn:adsk.objects:os.object:wip.dm.prod/{{resultFileObjectId}}\"\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
