@@ -15,7 +15,7 @@
 						"exec": [
 							"try {",
 							"    var jsonData = JSON.parse(responseBody);",
-							"    postman.setEnvironmentVariable(\"aps_2LeggedToken\", jsonData.access_token);",
+							"    postman.setEnvironmentVariable(\"2LeggedToken\", jsonData.access_token);",
 							"    tests[\"Access token request\"] = true;",
 							"} catch (ex) {",
 							"    tests[\"Access token request\"] = false;",
@@ -46,12 +46,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "{{aps_clientSecret}}",
+							"value": "{{clientSecret}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "{{aps_clientId}}",
+							"value": "{{clientId}}",
 							"type": "string"
 						}
 					]
@@ -73,15 +73,15 @@
 						},
 						{
 							"key": "scope",
-							"value": "{{aps_scope}}",
+							"value": "{{scope}}",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "{{aps_baseUrl}}/authentication/v2/token",
+					"raw": "{{baseUrl}}/authentication/v2/token",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"authentication",
@@ -130,7 +130,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
@@ -143,9 +143,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/appbundles",
+					"raw": "{{dasApiRoot}}/appbundles",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"appbundles"
@@ -164,7 +164,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}",
+						"value": "Bearer {{2LeggedToken}}",
 						"type": "text"
 					},
 					{
@@ -184,9 +184,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/forgeapps/me",
+					"raw": "{{dasApiRoot}}/forgeapps/me",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"forgeapps",
@@ -311,7 +311,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
@@ -324,9 +324,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/appbundles/{{appBudleName}}/aliases",
+					"raw": "{{dasApiRoot}}/appbundles/{{appBudleName}}/aliases",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"appbundles",
@@ -361,12 +361,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\t\"id\": \"{{activityName}}\",\r\n\t\"commandLine\": [\r\n    \t\"$(engine.path)\\\\\\\\revitcoreconsole.exe /i \\\"$(args[rvtFile].path)\\\" /al \\\"$(appbundles[{{appBudleName}}].path)\\\"\"\r\n\t],\r\n\t\"parameters\": {\r\n\t  \"rvtFile\": {\r\n\t\t\"zip\": false,\r\n\t\t\"ondemand\": false,\r\n\t\t\"verb\": \"get\",\r\n\t\t\"description\": \"Input Revit model\",\r\n\t\t\"required\": true\r\n\t  },\r\n\t  \"result\": {\r\n\t\t\"zip\": false,\r\n\t\t\"ondemand\": false,\r\n\t\t\"verb\": \"put\",\r\n\t\t\"description\": \"Results\",\r\n\t\t\"required\": true,\r\n\t\t\"localName\": \"result.rvt\"\r\n\t  }\r\n\t},\r\n\t\"engine\": \"Autodesk.Revit+2025\",\r\n\t\"appbundles\": [ \"{{dasNickName}}.{{appBudleName}}+{{appBundleAlias}}\" ],\r\n\t\"description\": \"Processes [xx] from a Revit file.\"\r\n}",
+					"raw": "{\r\n\t\"id\": \"{{activityName}}\",\r\n\t\"commandLine\": [\r\n    \t\"$(engine.path)\\\\\\\\revitcoreconsole.exe /i \\\"$(args[rvtFile].path)\\\" /al \\\"$(appbundles[{{appBudleName}}].path)\\\"\"\r\n\t],\r\n\t\"parameters\": {\r\n\t  \"rvtFile\": {\r\n\t\t\"zip\": false,\r\n\t\t\"ondemand\": false,\r\n\t\t\"verb\": \"get\",\r\n\t\t\"description\": \"Input Revit model\",\r\n\t\t\"required\": true\r\n\t  },\r\n\t  \"csvFile\": {\r\n\t\t\"zip\": false,\r\n\t\t\"ondemand\": false,\r\n\t\t\"verb\": \"get\",\r\n\t\t\"description\": \"Input CSV file\",\r\n\t\t\"required\": true,\r\n\t\t\"localName\": \"titleblock_updates.csv\"\r\n\t  },\r\n\t  \"result\": {\r\n\t\t\"zip\": false,\r\n\t\t\"ondemand\": false,\r\n\t\t\"verb\": \"put\",\r\n\t\t\"description\": \"Results\",\r\n\t\t\"required\": true,\r\n\t\t\"localName\": \"result.rvt\"\r\n\t  }\r\n\t},\r\n\t\"engine\": \"Autodesk.Revit+2025\",\r\n\t\"appbundles\": [ \"{{dasNickName}}.{{appBudleName}}+{{appBundleAlias}}\" ],\r\n\t\"description\": \"Processes [xx] from a Revit file.\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -374,9 +374,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/activities",
+					"raw": "{{dasApiRoot}}/activities",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"activities"
@@ -395,7 +395,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
@@ -408,9 +408,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/activities/{{activityName}}/aliases",
+					"raw": "{{dasApiRoot}}/activities/{{activityName}}/aliases",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"activities",
@@ -422,7 +422,7 @@
 			"response": []
 		},
 		{
-			"name": "06-GET Download Storage Object ID",
+			"name": "06-GET rvtFile Storage Object ID",
 			"event": [
 				{
 					"listen": "test",
@@ -431,9 +431,9 @@
 							"\r",
 							"try {\r",
 							"   var jsonData = JSON.parse(responseBody);\r",
-							"    postman.setEnvironmentVariable(\"aps_documentUrn\", jsonData.data[0].relationships.tip.data.id);\r",
-							"    postman.setEnvironmentVariable(\"aps_documentObjectId\", jsonData.included[0].relationships.storage.data.id.split(\"/\")[1]);\r",
-							"    postman.setEnvironmentVariable(\"aps_documentUrnEncoded\", jsonData.included[0].relationships.derivatives.data.id);\r",
+							"    postman.setEnvironmentVariable(\"rvtFile_documentUrn\", jsonData.data[0].relationships.tip.data.id);\r",
+							"    postman.setEnvironmentVariable(\"rvtFile_documentObjectId\", jsonData.included[0].relationships.storage.data.id.split(\"/\")[1]);\r",
+							"    postman.setEnvironmentVariable(\"rvtFile_documentUrnEncoded\", jsonData.included[0].relationships.derivatives.data.id);\r",
 							"    tests[\"GET Document URN\"] = true;\r",
 							"} catch (ex) {\r",
 							"    tests[\"GET Document URN\"] = false;\r",
@@ -459,9 +459,9 @@
 					}
 				],
 				"url": {
-					"raw": "{{aps_baseUrl}}/data/v1/projects/:project_id/folders/:folder_id/contents?filter[attributes.displayName]-contains=2025_rac_advanced_sample_project.rvt",
+					"raw": "{{baseUrl}}/data/v1/projects/:project_id/folders/:folder_id/contents?filter[attributes.displayName]-contains=2025_rac_advanced_sample_project.rvt",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"data",
@@ -486,11 +486,11 @@
 					"variable": [
 						{
 							"key": "project_id",
-							"value": "{{aps_dm_projectId}}"
+							"value": "{{dm_projectId}}"
 						},
 						{
 							"key": "folder_id",
-							"value": "{{aps_folderUrn}}"
+							"value": "{{folderUrn}}"
 						}
 					]
 				},
@@ -499,7 +499,84 @@
 			"response": []
 		},
 		{
-			"name": "07-Generate Signed S3 Download URL",
+			"name": "06.1-GET csvFile Storage Object ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"try {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"    postman.setEnvironmentVariable(\"csvFile_documentUrn\", jsonData.data[0].relationships.tip.data.id);\r",
+							"    postman.setEnvironmentVariable(\"csvFile_documentObjectId\", jsonData.included[0].relationships.storage.data.id.split(\"/\")[1]);\r",
+							"    postman.setEnvironmentVariable(\"csvFile_documentUrnEncoded\", jsonData.included[0].relationships.derivatives.data.id);\r",
+							"    tests[\"GET Document URN\"] = true;\r",
+							"} catch (ex) {\r",
+							"    tests[\"GET Document URN\"] = false;\r",
+							"    \r",
+							"     // Stop workflow\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-user-id",
+						"value": "",
+						"description": "Optional",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/data/v1/projects/:project_id/folders/:folder_id/contents?filter[attributes.displayName]-contains=titleblock_updates.csv",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"data",
+						"v1",
+						"projects",
+						":project_id",
+						"folders",
+						":folder_id",
+						"contents"
+					],
+					"query": [
+						{
+							"key": "includeHidden",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "filter[attributes.displayName]-contains",
+							"value": "titleblock_updates.csv"
+						}
+					],
+					"variable": [
+						{
+							"key": "project_id",
+							"value": "{{dm_projectId}}"
+						},
+						{
+							"key": "folder_id",
+							"value": "{{folderUrn}}"
+						}
+					]
+				},
+				"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/\">Documentation</a>"
+			},
+			"response": []
+		},
+		{
+			"name": "07-Generate rvtFile Signed Download URL",
 			"event": [
 				{
 					"listen": "test",
@@ -527,9 +604,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{aps_baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3download",
+					"raw": "{{baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3download",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"oss",
@@ -547,7 +624,63 @@
 						},
 						{
 							"key": "objectKey",
-							"value": "{{aps_documentObjectId}}"
+							"value": "{{rvtFile_documentObjectId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07.1-Generate csvFile Signed Download URL Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"try {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"    postman.setEnvironmentVariable(\"csvFileDownloadURL\", jsonData.url);\r",
+							"    tests[\"GET Download URL\"] = true;\r",
+							"} catch (ex) {\r",
+							"    tests[\"GET Download URL\"] = false;\r",
+							"    \r",
+							"     // Stop workflow\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3download",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"oss",
+						"v2",
+						"buckets",
+						":bucketKey",
+						"objects",
+						":objectKey",
+						"signeds3download"
+					],
+					"variable": [
+						{
+							"key": "bucketKey",
+							"value": "wip.dm.prod"
+						},
+						{
+							"key": "objectKey",
+							"value": "{{csvFile_documentObjectId}}"
 						}
 					]
 				}
@@ -584,14 +717,14 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}",
+						"value": "Bearer {{2LeggedToken}}",
 						"type": "text",
 						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"jsonapi\": {\r\n        \"version\": \"1.0\"\r\n    },\r\n    \"data\": {\r\n        \"type\": \"objects\",\r\n        \"attributes\": {\r\n            \"name\": \"result.rvt\"\r\n        },\r\n        \"relationships\": {\r\n            \"target\": {\r\n                \"data\": {\r\n                    \"type\": \"folders\",\r\n                    \"id\": \"{{aps_folderUrn}}\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+					"raw": "{\r\n    \"jsonapi\": {\r\n        \"version\": \"1.0\"\r\n    },\r\n    \"data\": {\r\n        \"type\": \"objects\",\r\n        \"attributes\": {\r\n            \"name\": \"result.rvt\"\r\n        },\r\n        \"relationships\": {\r\n            \"target\": {\r\n                \"data\": {\r\n                    \"type\": \"folders\",\r\n                    \"id\": \"{{folderUrn}}\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -599,9 +732,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_baseUrl}}/data/v1/projects/:project_id/storage",
+					"raw": "{{baseUrl}}/data/v1/projects/:project_id/storage",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"data",
@@ -613,7 +746,7 @@
 					"variable": [
 						{
 							"key": "project_id",
-							"value": "{{aps_dm_projectId}}",
+							"value": "{{dm_projectId}}",
 							"type": "string"
 						}
 					]
@@ -652,9 +785,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{aps_baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3upload",
+					"raw": "{{baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3upload",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"oss",
@@ -703,12 +836,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n \"activityId\": \"{{dasNickName}}.{{activityName}}+{{activityAlias}}\",\r\n \"arguments\": {\r\n   \"rvtFile\": {\r\n     \"url\": \"{{rvtFileDownloadURL}}\"\r\n   },\r\n   \"result\": {\r\n     \"verb\": \"put\",\r\n     \"url\": \"{{resultFileUploadURL}}\"\r\n   }\r\n }\r\n}",
+					"raw": "{\r\n \"activityId\": \"{{dasNickName}}.{{activityName}}+{{activityAlias}}\",\r\n \"arguments\": {\r\n   \"rvtFile\": {\r\n     \"url\": \"{{rvtFileDownloadURL}}\"\r\n   },\r\n   \"csvFile\": {\r\n     \"url\": \"{{csvFileDownloadURL}}\"\r\n   },\r\n   \"result\": {\r\n     \"verb\": \"put\",\r\n     \"url\": \"{{resultFileUploadURL}}\"\r\n   }\r\n }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -716,9 +849,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/workitems",
+					"raw": "{{dasApiRoot}}/workitems",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"workitems"
@@ -737,13 +870,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/workitems/{{workitemId}}",
+					"raw": "{{dasApiRoot}}/workitems/{{workitemId}}",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"workitems",
@@ -780,9 +913,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3upload",
+					"raw": "{{baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3upload",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"oss",
@@ -845,9 +978,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_baseUrl}}/data/v1/projects/:projectId/items",
+					"raw": "{{baseUrl}}/data/v1/projects/:projectId/items",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"data",
@@ -859,7 +992,7 @@
 					"variable": [
 						{
 							"key": "projectId",
-							"value": "{{aps_dm_projectId}}"
+							"value": "{{dm_projectId}}"
 						}
 					]
 				}
@@ -893,9 +1026,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{aps_baseUrl}}/data/v1/projects/:projectId/versions",
+					"raw": "{{baseUrl}}/data/v1/projects/:projectId/versions",
 					"host": [
-						"{{aps_baseUrl}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"data",
@@ -907,7 +1040,7 @@
 					"variable": [
 						{
 							"key": "projectId",
-							"value": "{{aps_dm_projectId}}"
+							"value": "{{dm_projectId}}"
 						}
 					]
 				}
@@ -924,13 +1057,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/appbundles",
+					"raw": "{{dasApiRoot}}/appbundles",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"appbundles"
@@ -949,13 +1082,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/activities",
+					"raw": "{{dasApiRoot}}/activities",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"activities"
@@ -986,7 +1119,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
@@ -994,9 +1127,9 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/workitems/{{workitemId}}",
+					"raw": "{{dasApiRoot}}/workitems/{{workitemId}}",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"workitems",
@@ -1028,7 +1161,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
@@ -1036,9 +1169,9 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/activities/{{activityName}}",
+					"raw": "{{dasApiRoot}}/activities/{{activityName}}",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"activities",
@@ -1070,7 +1203,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}"
+						"value": "Bearer {{2LeggedToken}}"
 					}
 				],
 				"body": {
@@ -1078,9 +1211,9 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/appbundles/{{appBudleName}}",
+					"raw": "{{dasApiRoot}}/appbundles/{{appBudleName}}",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"appbundles",
@@ -1100,7 +1233,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{aps_2LeggedToken}}",
+						"value": "Bearer {{2LeggedToken}}",
 						"type": "text"
 					}
 				],
@@ -1109,9 +1242,9 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{aps_dasApiRoot}}/forgeapps/me",
+					"raw": "{{dasApiRoot}}/forgeapps/me",
 					"host": [
-						"{{aps_dasApiRoot}}"
+						"{{dasApiRoot}}"
 					],
 					"path": [
 						"forgeapps",
@@ -1128,27 +1261,27 @@
 		"oauth2": [
 			{
 				"key": "scope",
-				"value": "{{aps_scope}}",
+				"value": "{{scope}}",
 				"type": "string"
 			},
 			{
 				"key": "clientSecret",
-				"value": "{{aps_clientSecret}}",
+				"value": "{{clientSecret}}",
 				"type": "string"
 			},
 			{
 				"key": "clientId",
-				"value": "{{aps_clientId}}",
+				"value": "{{clientId}}",
 				"type": "string"
 			},
 			{
 				"key": "accessTokenUrl",
-				"value": "{{aps_accessTokenUrl}}",
+				"value": "{{accessTokenUrl}}",
 				"type": "string"
 			},
 			{
 				"key": "authUrl",
-				"value": "{{aps_authUrl}}",
+				"value": "{{authUrl}}",
 				"type": "string"
 			},
 			{
