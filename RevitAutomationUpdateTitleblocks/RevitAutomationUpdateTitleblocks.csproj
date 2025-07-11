@@ -1,0 +1,80 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>RevitAutomationUpdateTitleblocks</RootNamespace>
+    <Nullable>enable</Nullable>
+	<Company>Autodesk</Company>
+	<Version>1.0.0.0</Version>
+	<LangVersion>latest</LangVersion>
+	<Copyright>© Autodesk</Copyright>
+	  
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<ImplicitUsings>true</ImplicitUsings>
+	<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<PublishAddinFiles>true</PublishAddinFiles>
+	  
+	<TargetFramework>net8.0-windows</TargetFramework>
+	<PlatformTarget>x64</PlatformTarget>
+	<RevitVersion>2025</RevitVersion>
+	<RunWorkingDirectory>C:\Test\Revit Automation Update Titleblocks\</RunWorkingDirectory>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<StartAction>Program</StartAction>
+		<StartProgram>C:\Program Files\Autodesk\Revit $(RevitVersion)\Revit.exe</StartProgram>
+		<StartArguments>/language ENG</StartArguments>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="PackageContents.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="PackageContents.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*" />
+		<PackageReference Include="Autodesk.Forge.DesignAutomation.Revit" Version="$(RevitVersion).0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<PreBuildEvent>
+			set REVIT_ADDINS="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\"
+			set ADDIN="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\$(MSBuildProjectName)\"
+
+			echo %25REVIT_ADDINS%25
+			echo %25ADDIN%25
+			if not exist "%25REVIT_ADDINS%25" (MKDIR "%25REVIT_ADDINS%25")
+			if not exist "%25ADDIN%25" (MKDIR "%25ADDIN%25")
+
+		</PreBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PostBuildEvent>
+			set ADDINS="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\"
+			set ADDIN="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\$(MSBuildProjectName)\"
+			echo %25ADDIN%25
+			echo "Target Framework: $(TargetFramework)"
+			echo "Configuration: $(Configuration)"
+			echo "Revit Version: $(RevitVersion)"
+			echo "Solution Dir: $(SolutionDir)"
+			echo "Project Dir: $(MSBuildProjectDirectory)"
+			echo "Target Name: $(MSBuildProjectName)"
+			xcopy /E /Y "$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)" %25ADDIN%25
+			copy "$(MSBuildProjectDirectory)\$(MSBuildProjectName).addin" "%25ADDINs%25$(MSBuildProjectName).addin"
+
+
+			if exist "$(SolutionDir)Bundles\$(MSBuildProjectName).bundle" (RD /S /Q  "$(SolutionDir)Bundles\$(MSBuildProjectName).bundle")
+			if exist "$(SolutionDir)Bundles\$(MSBuildProjectName).zip" (del /F  "$(SolutionDir)Bundles\$(MSBuildProjectName).zip")
+
+			xcopy /Y /F "$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\*.dll" "$(SolutionDir)Bundles\$(MSBuildProjectName).bundle\Contents\$(MSBuildProjectName)\"
+			xcopy /Y /F "$(MSBuildProjectDirectory)\RevitAutomationUpdateTitleblocks.addin" "$(SolutionDir)Bundles\$(MSBuildProjectName).bundle\Contents\"
+			xcopy /Y /F "$(MSBuildProjectDirectory)\PackageContents.xml" "$(SolutionDir)Bundles\$(MSBuildProjectName).bundle\"
+			"C:\Program Files\7-Zip\7z.exe" a -tzip "$(SolutionDir)Bundles\$(MSBuildProjectName).zip" "$(SolutionDir)Bundles\$(MSBuildProjectName).bundle" -xr0!*.pdb
+		</PostBuildEvent>
+	</PropertyGroup>
+
+</Project>

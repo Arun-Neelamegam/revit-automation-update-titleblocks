@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitAutomationUpdateTitleblocks", "RevitAutomationUpdateTitleblocks\RevitAutomationUpdateTitleblocks.csproj", "{2780C5CF-FAF7-57BD-C35A-E3E4E4072D6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalDebug", "LocalDebug\LocalDebug.csproj", "{05EEA433-3F94-7FC3-6293-C82229131339}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2780C5CF-FAF7-57BD-C35A-E3E4E4072D6B} = {2780C5CF-FAF7-57BD-C35A-E3E4E4072D6B}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Postman", "Postman", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		Postman\AU2025 - Revit Automation.postman_collection.json = Postman\AU2025 - Revit Automation.postman_collection.json
+		Postman\AU2025 - Revit Automation.postman_environment.json = Postman\AU2025 - Revit Automation.postman_environment.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bundles", "Bundles", "{35DF2602-2AF2-4C3A-A03A-E3ECB00E2410}"
+	ProjectSection(SolutionItems) = preProject
+		Bundles\RevitAutomationUpdateTitleblocks.zip = Bundles\RevitAutomationUpdateTitleblocks.zip
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2780C5CF-FAF7-57BD-C35A-E3E4E4072D6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2780C5CF-FAF7-57BD-C35A-E3E4E4072D6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2780C5CF-FAF7-57BD-C35A-E3E4E4072D6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2780C5CF-FAF7-57BD-C35A-E3E4E4072D6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05EEA433-3F94-7FC3-6293-C82229131339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05EEA433-3F94-7FC3-6293-C82229131339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05EEA433-3F94-7FC3-6293-C82229131339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05EEA433-3F94-7FC3-6293-C82229131339}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02829CE5-323F-4C2F-BD7B-41B2694A1673}
+	EndGlobalSection
+EndGlobal

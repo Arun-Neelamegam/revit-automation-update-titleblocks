@@ -1,0 +1,1223 @@
+{
+	"info": {
+		"_postman_id": "d6e4c349-0236-48b8-aa6e-0432b08ad72f",
+		"name": "AU2025 - Revit Automation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1980669"
+	},
+	"item": [
+		{
+			"name": "POST Token (2 legged)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"try {",
+							"    var jsonData = JSON.parse(responseBody);",
+							"    postman.setEnvironmentVariable(\"aps_2LeggedToken\", jsonData.access_token);",
+							"    tests[\"Access token request\"] = true;",
+							"} catch (ex) {",
+							"    tests[\"Access token request\"] = false;",
+							"    ",
+							"     // Stop workflow",
+							"    postman.setNextRequest(null);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{aps_clientSecret}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{aps_clientId}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "{{aps_scope}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{aps_baseUrl}}/authentication/v2/token",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"authentication",
+						"v2",
+						"token"
+					]
+				},
+				"description": "<a href=\"https://developer.autodesk.com/en/docs/oauth/v2/reference/http/authenticate-POST/\">Documentation</a>"
+			},
+			"response": []
+		},
+		{
+			"name": "01-Create app bundle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);",
+							"pm.environment.set(\"appBundleUrl\", body[\"uploadParameters\"][\"endpointURL\"]);",
+							"pm.environment.set(\"appBundleVersion\", body[\"version\"]);",
+							"pm.environment.set(\"appBundleFormDataKey\", body[\"uploadParameters\"][\"formData\"][\"key\"]);",
+							"pm.environment.set(\"appBundleFormDataPolicy\", body[\"uploadParameters\"][\"formData\"][\"policy\"]);",
+							"pm.environment.set(\"appBundleFormDataSignature\", body[\"uploadParameters\"][\"formData\"][\"x-amz-signature\"]);",
+							"pm.environment.set(\"appBundleFormDataCredential\", body[\"uploadParameters\"][\"formData\"][\"x-amz-credential\"]);",
+							"pm.environment.set(\"appBundleFormDataDate\", body[\"uploadParameters\"][\"formData\"][\"x-amz-date\"]);",
+							"pm.environment.set(\"appBundleFormDataToken\", body[\"uploadParameters\"][\"formData\"][\"x-amz-security-token\"]);",
+							"pm.environment.set(\"appBundleFormRedirect\", body[\"uploadParameters\"][\"formData\"][\"success_action_redirect\"]);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"id\": \"{{appBudleName}}\",\r\n\t\"engine\": \"Autodesk.Revit+2025\",\r\n\t\"description\": \"Operate on a Revit file in the cloud (2025)\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/appbundles",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"appbundles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "01.1-Create App Nickname",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"nickname\": \"{{dasNickName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/forgeapps/me",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"forgeapps",
+						"me"
+					]
+				},
+				"description": "User friendly name associated with the owner app"
+			},
+			"response": []
+		},
+		{
+			"name": "02-Upload app bundle to Design Automation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "key",
+							"value": "{{appBundleFormDataKey}}",
+							"type": "text"
+						},
+						{
+							"key": "content-type",
+							"value": "application/octet-stream",
+							"type": "text"
+						},
+						{
+							"key": "policy",
+							"value": "{{appBundleFormDataPolicy}}",
+							"type": "text"
+						},
+						{
+							"key": "success_action_status",
+							"value": "200",
+							"type": "text"
+						},
+						{
+							"key": "x-amz-signature",
+							"value": "{{appBundleFormDataSignature}}",
+							"type": "text"
+						},
+						{
+							"key": "x-amz-credential",
+							"value": "{{appBundleFormDataCredential}}",
+							"type": "text"
+						},
+						{
+							"key": "x-amz-algorithm",
+							"value": "AWS4-HMAC-SHA256",
+							"type": "text"
+						},
+						{
+							"key": "x-amz-date",
+							"value": "{{appBundleFormDataDate}}",
+							"type": "text"
+						},
+						{
+							"key": "x-amz-server-side-encryption",
+							"value": "AES256",
+							"type": "text"
+						},
+						{
+							"key": "x-amz-security-token",
+							"value": "{{appBundleFormDataToken}}",
+							"type": "text"
+						},
+						{
+							"key": "success_action_redirect",
+							"value": "{{appBundleFormRedirect}}",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/Repos/Customers/HDR/revit-automation-update-titleblocks/Bundles/RevitAutomationUpdateTitleblocks.zip"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{appBundleUrl}}",
+					"host": [
+						"{{appBundleUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03-Create a new app bundle alias",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"version\": \"{{appBundleVersion}}\",\r\n  \"id\": \"{{appBundleAlias}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/appbundles/{{appBudleName}}/aliases",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"appbundles",
+						"{{appBudleName}}",
+						"aliases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04-Create activity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);",
+							"pm.environment.set(\"activityVersion\", body[\"version\"]);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"id\": \"{{activityName}}\",\r\n\t\"commandLine\": [\r\n    \t\"$(engine.path)\\\\\\\\revitcoreconsole.exe /i \\\"$(args[rvtFile].path)\\\" /al \\\"$(appbundles[{{appBudleName}}].path)\\\"\"\r\n\t],\r\n\t\"parameters\": {\r\n\t  \"rvtFile\": {\r\n\t\t\"zip\": false,\r\n\t\t\"ondemand\": false,\r\n\t\t\"verb\": \"get\",\r\n\t\t\"description\": \"Input Revit model\",\r\n\t\t\"required\": true\r\n\t  },\r\n\t  \"result\": {\r\n\t\t\"zip\": false,\r\n\t\t\"ondemand\": false,\r\n\t\t\"verb\": \"put\",\r\n\t\t\"description\": \"Results\",\r\n\t\t\"required\": true,\r\n\t\t\"localName\": \"result.rvt\"\r\n\t  }\r\n\t},\r\n\t\"engine\": \"Autodesk.Revit+2025\",\r\n\t\"appbundles\": [ \"{{dasNickName}}.{{appBudleName}}+{{appBundleAlias}}\" ],\r\n\t\"description\": \"Processes [xx] from a Revit file.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/activities",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"activities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05-Create activity alias",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"{{activityAlias}}\",\r\n    \"version\": \"{{activityVersion}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/activities/{{activityName}}/aliases",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"activities",
+						"{{activityName}}",
+						"aliases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06-GET Download Storage Object ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"try {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"    postman.setEnvironmentVariable(\"aps_documentUrn\", jsonData.data[0].relationships.tip.data.id);\r",
+							"    postman.setEnvironmentVariable(\"aps_documentObjectId\", jsonData.included[0].relationships.storage.data.id.split(\"/\")[1]);\r",
+							"    postman.setEnvironmentVariable(\"aps_documentUrnEncoded\", jsonData.included[0].relationships.derivatives.data.id);\r",
+							"    tests[\"GET Document URN\"] = true;\r",
+							"} catch (ex) {\r",
+							"    tests[\"GET Document URN\"] = false;\r",
+							"    \r",
+							"     // Stop workflow\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-user-id",
+						"value": "",
+						"description": "Optional",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{aps_baseUrl}}/data/v1/projects/:project_id/folders/:folder_id/contents?filter[attributes.displayName]-contains=2025_rac_advanced_sample_project.rvt",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"data",
+						"v1",
+						"projects",
+						":project_id",
+						"folders",
+						":folder_id",
+						"contents"
+					],
+					"query": [
+						{
+							"key": "includeHidden",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "filter[attributes.displayName]-contains",
+							"value": "2025_rac_advanced_sample_project.rvt"
+						}
+					],
+					"variable": [
+						{
+							"key": "project_id",
+							"value": "{{aps_dm_projectId}}"
+						},
+						{
+							"key": "folder_id",
+							"value": "{{aps_folderUrn}}"
+						}
+					]
+				},
+				"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/\">Documentation</a>"
+			},
+			"response": []
+		},
+		{
+			"name": "07-Generate Signed S3 Download URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"try {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"    postman.setEnvironmentVariable(\"rvtFileDownloadURL\", jsonData.url);\r",
+							"    tests[\"GET Download URL\"] = true;\r",
+							"} catch (ex) {\r",
+							"    tests[\"GET Download URL\"] = false;\r",
+							"    \r",
+							"     // Stop workflow\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{aps_baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3download",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"oss",
+						"v2",
+						"buckets",
+						":bucketKey",
+						"objects",
+						":objectKey",
+						"signeds3download"
+					],
+					"variable": [
+						{
+							"key": "bucketKey",
+							"value": "wip.dm.prod"
+						},
+						{
+							"key": "objectKey",
+							"value": "{{aps_documentObjectId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "08-Create Storage Object",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"try {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"    postman.setEnvironmentVariable(\"resultFileObjectId\", jsonData.data.id.split(\"/\")[1]);\r",
+							"    tests[\"Post Storage Object\"] = true;\r",
+							"} catch (ex) {\r",
+							"    tests[\"Post Storage Object\"] = false;\r",
+							"    \r",
+							"     // Stop workflow\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"jsonapi\": {\r\n        \"version\": \"1.0\"\r\n    },\r\n    \"data\": {\r\n        \"type\": \"objects\",\r\n        \"attributes\": {\r\n            \"name\": \"result.rvt\"\r\n        },\r\n        \"relationships\": {\r\n            \"target\": {\r\n                \"data\": {\r\n                    \"type\": \"folders\",\r\n                    \"id\": \"{{aps_folderUrn}}\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_baseUrl}}/data/v1/projects/:project_id/storage",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"data",
+						"v1",
+						"projects",
+						":project_id",
+						"storage"
+					],
+					"variable": [
+						{
+							"key": "project_id",
+							"value": "{{aps_dm_projectId}}",
+							"type": "string"
+						}
+					]
+				},
+				"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/\">Documentation</a>"
+			},
+			"response": []
+		},
+		{
+			"name": "09-Generate Signed S3 Upload URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"try {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"    postman.setEnvironmentVariable(\"resultFileUploadURL\", jsonData.urls[0]);\r",
+							"    postman.setEnvironmentVariable(\"resultFileUploadKey\", jsonData.uploadKey);\r",
+							"    tests[\"GET Upload URL\"] = true;\r",
+							"} catch (ex) {\r",
+							"    tests[\"GET Upload URL\"] = false;\r",
+							"    \r",
+							"     // Stop workflow\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{aps_baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3upload",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"oss",
+						"v2",
+						"buckets",
+						":bucketKey",
+						"objects",
+						":objectKey",
+						"signeds3upload"
+					],
+					"variable": [
+						{
+							"key": "bucketKey",
+							"value": "wip.dm.prod"
+						},
+						{
+							"key": "objectKey",
+							"value": "{{resultFileObjectId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10-Send Workitem",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);",
+							"pm.environment.set(\"workitemId\", body[\"id\"]);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"activityId\": \"{{dasNickName}}.{{activityName}}+{{activityAlias}}\",\r\n \"arguments\": {\r\n   \"rvtFile\": {\r\n     \"url\": \"{{rvtFileDownloadURL}}\"\r\n   },\r\n   \"result\": {\r\n     \"verb\": \"put\",\r\n     \"url\": \"{{resultFileUploadURL}}\"\r\n   }\r\n }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/workitems",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"workitems"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11-Get Workitem status",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/workitems/{{workitemId}}",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"workitems",
+						"{{workitemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12 Complete the Upload",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"uploadKey\": \"{{resultFileUploadKey}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_baseUrl}}/oss/v2/buckets/:bucketKey/objects/:objectKey/signeds3upload",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"oss",
+						"v2",
+						"buckets",
+						":bucketKey",
+						"objects",
+						":objectKey",
+						"signeds3upload"
+					],
+					"variable": [
+						{
+							"key": "bucketKey",
+							"value": "wip.dm.prod"
+						},
+						{
+							"key": "objectKey",
+							"value": "{{resultFileObjectId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13 Create the 1st Version of the Result file",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"try {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"    postman.setEnvironmentVariable(\"resultFileItemId\", jsonData.data.id);\r",
+							"    tests[\"GET Item Id\"] = true;\r",
+							"} catch (ex) {\r",
+							"    tests[\"GET Item Id\"] = false;\r",
+							"    \r",
+							"     // Stop workflow\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"jsonapi\": {\r\n        \"version\": \"1.0\"\r\n    },\r\n    \"data\": {\r\n        \"type\": \"items\",\r\n        \"attributes\": {\r\n            \"displayName\": \"result.rvt\",\r\n            \"extension\": {\r\n                \"type\": \"items:autodesk.bim360:File\",\r\n                \"version\": \"1.0\"\r\n            }\r\n        },\r\n        \"relationships\": {\r\n            \"tip\": {\r\n                \"data\": {\r\n                    \"type\": \"versions\",\r\n                    \"id\": \"1\"\r\n                }\r\n            },\r\n            \"parent\": {\r\n                \"data\": {\r\n                    \"type\": \"folders\",\r\n                    \"id\": \"{{aps_folderUrn}}\"\r\n                }\r\n            }\r\n        }\r\n    },\r\n    \"included\": [\r\n        {\r\n            \"type\": \"versions\",\r\n            \"id\": \"1\",\r\n            \"attributes\": {\r\n                \"name\": \"result.rvt\",\r\n                \"extension\": {\r\n                    \"type\": \"versions:autodesk.bim360:File\",\r\n                    \"version\": \"1.0\"\r\n                }\r\n            },\r\n            \"relationships\": {\r\n                \"storage\": {\r\n                    \"data\": {\r\n                        \"type\": \"objects\",\r\n                        \"id\": \"urn:adsk.objects:os.object:wip.dm.prod/{{resultFileObjectId}}\"\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_baseUrl}}/data/v1/projects/:projectId/items",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"data",
+						"v1",
+						"projects",
+						":projectId",
+						"items"
+					],
+					"variable": [
+						{
+							"key": "projectId",
+							"value": "{{aps_dm_projectId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13 Create the additional Versions of the Result file",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"jsonapi\": {\r\n        \"version\": \"1.0\"\r\n    },\r\n    \"data\": {\r\n        \"type\": \"versions\",\r\n        \"attributes\": {\r\n            \"name\": \"result.rvt\",\r\n            \"extension\": {\r\n                \"type\": \"versions:autodesk.bim360:File\",\r\n                \"version\": \"1.0\"\r\n            }\r\n        },\r\n        \"relationships\": {\r\n            \"item\": {\r\n                \"data\": {\r\n                    \"type\": \"items\",\r\n                    \"id\": \"{{resultFileItemId}}\"\r\n                }\r\n            },\r\n            \"storage\": {\r\n                \"data\": {\r\n                    \"type\": \"objects\",\r\n                    \"id\": \"urn:adsk.objects:os.object:wip.dm.prod/{{resultFileObjectId}}\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{aps_baseUrl}}/data/v1/projects/:projectId/versions",
+					"host": [
+						"{{aps_baseUrl}}"
+					],
+					"path": [
+						"data",
+						"v1",
+						"projects",
+						":projectId",
+						"versions"
+					],
+					"variable": [
+						{
+							"key": "projectId",
+							"value": "{{aps_dm_projectId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get list of appbundles",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/appbundles",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"appbundles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get list of activities",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/activities",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"activities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Workitem",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/workitems/{{workitemId}}",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"workitems",
+						"{{workitemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete activity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/activities/{{activityName}}",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"activities",
+						"{{activityName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete app bundle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/appbundles/{{appBudleName}}",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"appbundles",
+						"{{appBudleName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete My App",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{aps_2LeggedToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{aps_dasApiRoot}}/forgeapps/me",
+					"host": [
+						"{{aps_dasApiRoot}}"
+					],
+					"path": [
+						"forgeapps",
+						"me"
+					]
+				},
+				"description": "User friendly name associated with the owner app"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "scope",
+				"value": "{{aps_scope}}",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{aps_clientSecret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{aps_clientId}}",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "{{aps_accessTokenUrl}}",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "{{aps_authUrl}}",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "https://www.getpostman.com/oauth2/callback",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "APS_Token",
+				"type": "string"
+			},
+			{
+				"key": "refreshRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "tokenRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "authRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "body",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0"
+                    AutodeskProduct="Revit"
+                    Name="UpdateTitleblocksAutomation"
+                    Description="Update Title Block Parmameters"
+                    AppVersion="1.0.0.0"
+                    FriendlyVersion="1.0.0.0"
+                    ProductType="Application"
+                    Author="Autodesk, Inc.">
+	<CompanyDetails Name="Autodesk, Inc."
+					Phone=""
+					Url="http://www.autodesk.com"
+					Email="">
+	</CompanyDetails>
+	<Components Description="Addin to update Title Block Parmameters">
+		<RuntimeRequirements OS="Win64" 
+							 Platform="Revit" 
+							 SeriesMin="R2023" 
+							 SeriesMax="R2026" />
+		<ComponentEntry AppName="RevitAutomationUpdateTitleblocks" 
+						Version="1.0.0" 
+						ModuleName="./Contents/RevitAutomationUpdateTitleblocks.addin" 
+						AppDescription="Update Titleblocks"
+						LoadOnCommandInvocation="False"
+						LoadOnRevitStartup="True"/>
+	</Components>
+</ApplicationPackage>

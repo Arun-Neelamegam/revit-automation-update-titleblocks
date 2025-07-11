@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>Update Tilteblocks - Local Debug</Name>
+		<Assembly>.\LocalDebug\DesignAutomationHandler.dll</Assembly>
+		<AddInId>B76D76E8-465D-404F-94D0-98A0027C61FA</AddInId>
+		<FullClassName>DesignAutomationHandler.LocalDebugRibbon</FullClassName>
+		<VendorId>ADSK</VendorId>
+		<VendorDescription>Autodesk</VendorDescription>
+	</AddIn>
+</RevitAddIns>
