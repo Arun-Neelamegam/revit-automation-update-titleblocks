@@ -48,10 +48,11 @@ namespace RevitAutomationUpdateTitleblocks
             Console.WriteLine("Start Updating Titleblocks");
 
             // 1. Collect all titleblock instances in the document
-            var sheets = new FilteredElementCollector(rvtDoc)
-                .OfCategory(BuiltInCategory.OST_Sheets)
-                .OfClass(typeof(ViewSheet))
-                .Cast<ViewSheet>();
+            var collector = new FilteredElementCollector(rvtDoc)
+                .OfCategory(BuiltInCategory.OST_TitleBlocks)
+                .WhereElementIsNotElementType();
+
+            var titleblocks = collector.Cast<FamilyInstance>().ToList();
 
             // 2. Read CSV file for updates
             string dirPath = Directory.GetCurrentDirectory();
@@ -62,23 +63,19 @@ namespace RevitAutomationUpdateTitleblocks
                 return false;
             }
 
-            // Parse CSV into a list
+            // Parse CSV into a dictionary: SheetNumber -> List of (ParameterName, ParameterValue)
             var updates = new Dictionary<string, List<(string, string)>>();
-            var revisionDescriptionList = new List<string>();
-            var revisionDateList = new List<string>();
             foreach (var line in File.ReadLines(csvPath).Skip(1)) // Skip header
             {
                 var parts = line.Split(',');
-                if (parts.Length < 2) continue;
-                string revisionDescription = parts[0].Trim();
-                string revisionDate = parts[1].Trim();
-                revisionDescriptionList.Add(revisionDescription);
-                revisionDateList.Add(revisionDate);
-            }
+                if (parts.Length < 3) continue;
+                string sheetNumber = parts[0].Trim();
+                string paramName = parts[1].Trim();
+                string paramValue = parts[2].Trim();
 
-            if(revisionDescriptionList.Count != revisionDateList.Count)
-            {
-                Console.WriteLine($"Excel File has mis-matched data");
+                if (!updates.ContainsKey(sheetNumber))
+                    updates[sheetNumber] = new List<(string, string)>();
+                updates[sheetNumber].Add((paramName, paramValue));
             }
 
             // 3. Update titleblock parameters
@@ -86,32 +83,32 @@ namespace RevitAutomationUpdateTitleblocks
             using (Transaction tx = new Transaction(rvtDoc, "Update Titleblocks"))
             {
                 tx.Start();
-
-                for(int i = 0; i < revisionDateList.Count; i++)
+                foreach (var tb in titleblocks)
                 {
-                    // Create new revision
-                    Revision revision = Revision.Create(rvtDoc);
+                    // Get the sheet number from the titleblock's owner view (Sheet)
+                    var ownerView = rvtDoc.GetElement(tb.OwnerViewId) as ViewSheet;
+                    if (ownerView == null) continue;
+                    string sheetNumber = ownerView.SheetNumber;
 
-                    // Optional: Customize revision properties
-                    revision.Description = revisionDescriptionList[i];
-                    revision.RevisionDate = revisionDateList[i];
-                    revision.Visibility = RevisionVisibility.TagVisible;
-                    foreach (ViewSheet sheet in sheets)
+                    if (updates.TryGetValue(sheetNumber, out var paramUpdates))
                     {
-                        // Get the revisions already on the sheet
-                        var existingIds = sheet.GetAdditionalRevisionIds();
-
-                        // Add the new revision if not already present
-                        if (!existingIds.Contains(revision.Id))
+                        foreach (var (paramName, paramValue) in paramUpdates)
                         {
-                            var allRevisions = existingIds.ToList();
-                            allRevisions.Add(revision.Id);
-                            sheet.SetAdditionalRevisionIds(allRevisions);
-                            updatedCount++;
+                            Parameter param = tb.LookupParameter(paramName);
+                            if (param != null && !param.IsReadOnly)
+                            {
+                                if (param.StorageType == StorageType.String)
+                                    param.Set(paramValue);
+                                else if (param.StorageType == StorageType.Integer && int.TryParse(paramValue, out int intVal))
+                                    param.Set(intVal);
+                                else if (param.StorageType == StorageType.Double && double.TryParse(paramValue, out double dblVal))
+                                    param.Set(dblVal);
+                                // Add more type handling as needed
+                            }
                         }
+                        updatedCount++;
                     }
                 }
-
                 tx.Commit();
             }
 
