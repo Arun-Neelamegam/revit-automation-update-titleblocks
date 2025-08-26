@@ -13,7 +13,7 @@ namespace DesignAutomationHandler
     [Regeneration(RegenerationOption.Manual)]
     public class LocalDebugRibbon : IExternalApplication
     {
-        private const string OmniWorkingDir = "C:\\Test\\Revit Automation Update Titleblocks";
+        private const string WorkingDir = "C:\\Test\\Revit Automation Update Titleblocks";
 
         public Result OnStartup(UIControlledApplication application)
         {
@@ -21,7 +21,7 @@ namespace DesignAutomationHandler
             try
             {
 
-                if (Directory.GetCurrentDirectory() == OmniWorkingDir)
+                if (Directory.GetCurrentDirectory() == WorkingDir)
                 {
                     // create ribbon tab
                     application.CreateRibbonTab("Local Debug");
